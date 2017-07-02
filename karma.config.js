@@ -4,7 +4,7 @@ module.exports = function(config) {
         files: [
             { pattern: 'test-context.js', watched: false }
         ],
-        frameworks: ['jasmine'],
+        frameworks: ['jasmine', 'sinon'],
         preprocessors: {
             'test-context.js': ['webpack']
         },

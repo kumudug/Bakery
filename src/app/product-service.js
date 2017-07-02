@@ -2,8 +2,8 @@ import { getProductData } from './data-service-mock.js';
 
 let products = [];
 
-function init(){
-    products = getProductData();
+function _retrieveProductData(){
+    return getProductData();
 }
 
 function _getProductPackSpec(productCode) { 
@@ -79,8 +79,8 @@ function _calculatePackTotals(processedProductPackSpec){
     return processedProductPackSpec;
 }
 
-function calculateProductPacks(productCode, quantity) {
-    init();
+function calculateProductPacks(productCode, quantity) {    
+    init(); //refresh product data
     let sortedProductPackSpec = _sortProductsPacksDesc(_getProductPackSpec(productCode));
     let processedProductPackSpec = _calculateNumberOfPacks(sortedProductPackSpec, quantity);
     processedProductPackSpec = _calculatePackTotals(processedProductPackSpec);
@@ -89,4 +89,8 @@ function calculateProductPacks(productCode, quantity) {
     return processedProductPackSpec;
 }
 
-export { calculateProductPacks, _getProductPackSpec };
+function init(){
+    products = _retrieveProductData();  
+}
+
+export { calculateProductPacks, _getProductPackSpec, _retrieveProductData, init, _sortProductsPacksDesc, _calculateNumberOfPacks, _calculatePackTotals }; //export all for tests
