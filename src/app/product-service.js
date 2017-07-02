@@ -30,30 +30,6 @@ function _sortProductsPacksDesc(productPackSpec){
     return sortedAsc.reverse();
 }
 
-function _addFillerPack(sortedProductPackSpec, quantityToFill){
-    for(var i = (sortedProductPackSpec.length - 1); i > 0; i--){
-
-        if(sortedProductPackSpec[sortedProductPackSpec.length - 1].numOfPacks){ 
-            if(sortedProductPackSpec[sortedProductPackSpec.length - 1].numOfPacks == 1){
-                let countInSmallestPack = sortedProductPackSpec[i].count;
-                let countInImmediatelyLargePack = sortedProductPackSpec[i-1].count; 
-            }else{
-
-            }
-        }else{
-            sortedProductPackSpec[sortedProductPackSpec.length - 1].numOfPacks = 1;
-        }
-
-        
-
-
-        if(quantityToFill <= 0){
-            break;
-        }
-    }
-    return sortedProductPackSpec;
-}
-
 function _calculateNumberOfPacks(sortedProductPackSpec, quantity){
     if(!sortedProductPackSpec || !sortedProductPackSpec.length){
         throw 'Something has gone terribly wrong - productService._calculateNumberOfPacks';
@@ -136,42 +112,8 @@ function _calculateNumberOfPacks(sortedProductPackSpec, quantity){
                     }
                     sortedProductPackSpec[i].numOfPacks -= numPacksToRemove;
                     quantity += (numPacksToRemove * sortedProductPackSpec[i].count);
-                }
-                
-                
-
-                /*if(differenceInQtyIfSmallPacksRemoved >=0){
-                    //The quantity increase is same or less 
-                    //can safely change packs                    
-                    quantity -= (sortedProductPackSpec[i].numOfPacks * sortedProductPackSpec[i].count);
-                    let tempNumPacks = sortedProductPackSpec[i].numOfPacks;
-                    sortedProductPackSpec[i].numOfPacks = 0;
-                    if(sortedProductPackSpec[i-1].numOfPacks){
-                        sortedProductPackSpec[i-1].numOfPacks += 1;
-                        quantity += sortedProductPackSpec[i-1].count;
-                    }else{
-                        sortedProductPackSpec[i-1].numOfPacks = 1;
-                        quantity += sortedProductPackSpec[i-1].count;
-                    }
-                }*/
+                }             
             }
-
-            /*if(sortedProductPackSpec[i].numOfPacks && sortedProductPackSpec[i].numOfPacks > 1 && ((sortedProductPackSpec[i].numOfPacks * sortedProductPackSpec[i].count) >= sortedProductPackSpec[i-1].count)){
-                //Remove smaller packs and add a larger pack while keeping quantity in tact
-                let differenceInQty = sortedProductPackSpec[i-1].count - (sortedProductPackSpec[i].numOfPacks * sortedProductPackSpec[i].count);
-                if(differenceInQty >= quantity){
-                    //can safely change packs                    
-                    quantity -= (sortedProductPackSpec[i].numOfPacks * sortedProductPackSpec[i].count);
-                    sortedProductPackSpec[i].numOfPacks = 0;
-                    if(sortedProductPackSpec[i-1].numOfPacks){
-                        sortedProductPackSpec[i-1].numOfPacks += 1;
-                        quantity += sortedProductPackSpec[i-1].count;
-                    }else{
-                        sortedProductPackSpec[i-1].numOfPacks = 1;
-                        quantity += sortedProductPackSpec[i-1].count;
-                    }
-                }
-            }*/
         }
     }
 
