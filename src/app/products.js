@@ -3,7 +3,7 @@ import { getProductData } from './data-service-mock.js';
 let products = getProductData();
 
 function getProductPacks(productCode) { 
-    var productPacks = [];   
+    let productPacks = [];   
     products.some(p => {
         if( p.code === productCode ){            
             p.packs.forEach(pa => {
