@@ -35,24 +35,85 @@ function _calculateNumberOfPacks(sortedProductPackSpec, quantity){
         throw 'Something has gone terribly wrong - productService._calculateNumberOfPacks';
     }
 
-    sortedProductPackSpec.some(sp => {
+    for(let i=0; i<sortedProductPackSpec.length; i++){
+        let numOfPacks = Math.floor(quantity / sortedProductPackSpec[i].count);
+        let remainder = quantity % sortedProductPackSpec[i].count;
+        if(numOfPacks > 0){
+            //Check if qty is going greater than original quantity and whether it can be adjusted
+            /*let tempQty = quantity - (sortedProductPackSpec[i].count * numOfPacks);
+            if(numOfPacks == 1 && i < (sortedProductPackSpec.length -1) && sortedProductPackSpec[i].count > (sortedProductPackSpec[i+1].count * 2) && tempQty <= 0){
+                numOfPacks = 0;
+            }else{*/
+                quantity = quantity - (sortedProductPackSpec[i].count * numOfPacks);
+            //}       
+        }
+
+        if(sortedProductPackSpec[i].numOfPacks){
+            sortedProductPackSpec[i].numOfPacks += numOfPacks;
+        }else{
+            sortedProductPackSpec[i].numOfPacks = numOfPacks;
+        }
+        
+        if(quantity <= 0){
+            break;
+        }
+    }
+
+    /*sortedProductPackSpec.some(sp => {
         let numOfPacks = Math.floor(quantity / sp.count);
         if(numOfPacks > 0){
             quantity = quantity - (sp.count * numOfPacks);
-        } else{
-            let remainder = quantity % sp.count;
-            if(remainder > 0){
-                numOfPacks = 1;
-                quantity = 0;
-            }
         }
         sp.numOfPacks = numOfPacks;
         return quantity <= 0;
-    });
+    });*/
 
     if(quantity > 0){
-        //sortedProductPackSpec[sortedProductPackSpec.length - 1].numOfPacks can never be undefined after returning from above loop
-        sortedProductPackSpec[sortedProductPackSpec.length - 1].numOfPacks += 1;
+        if(sortedProductPackSpec[sortedProductPackSpec.length - 1].numOfPacks){ 
+            sortedProductPackSpec[sortedProductPackSpec.length - 1].numOfPacks += 1;
+        }else{
+            sortedProductPackSpec[sortedProductPackSpec.length - 1].numOfPacks = 1;
+        }
+        quantity -= sortedProductPackSpec[sortedProductPackSpec.length - 1].count;
+    }
+    
+    //refine packs if the actual quantity is greater than ordered quantity
+    if(quantity < 0){
+        let packsRefined = false;
+        for (var i = (sortedProductPackSpec.length - 1); i > 0; i--) {
+            if(sortedProductPackSpec[i].numOfPacks && sortedProductPackSpec[i].numOfPacks > 1 && ((sortedProductPackSpec[i].numOfPacks * sortedProductPackSpec[i].count) > sortedProductPackSpec[i-1].count)){
+                //Remove smaller packs and add a larger pack while keeping quantity in tact
+                let differenceInQty = sortedProductPackSpec[i-1].count - (sortedProductPackSpec[i].numOfPacks * sortedProductPackSpec[i].count);
+                if(differenceInQty > quantity){
+                    packsRefined = true;
+                    //can safely change packs
+                    sortedProductPackSpec[i].numOfPacks = 0;
+                    if(sortedProductPackSpec[i-1].numOfPacks){
+                        sortedProductPackSpec[i-1].numOfPacks += 1;
+                    }else{
+                        sortedProductPackSpec[i-1].numOfPacks = 1;
+                    }
+                }
+            }
+        }
+
+        if(!packsRefined){
+            for (var j = 0; j < (sortedProductPackSpec.length - 1); j++) {
+                if(sortedProductPackSpec[j].numOfPacks && sortedProductPackSpec[j].numOfPacks === 1 && ((sortedProductPackSpec[j+1].numOfPacks * 2) < sortedProductPackSpec[j].count)){
+                    //Remove larger pack and add 2 smaller packs while keeping quantity in tact
+                    let differenceInQty = sortedProductPackSpec[j].count - (sortedProductPackSpec[j+1].count * 2);
+                    if(differenceInQty > quantity){
+                        //can safely change packs
+                        sortedProductPackSpec[j].numOfPacks = 0;
+                        if(sortedProductPackSpec[j+1].numOfPacks){
+                            sortedProductPackSpec[j+1].numOfPacks += 1;
+                        }else{
+                            sortedProductPackSpec[j+1].numOfPacks = 1;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     return sortedProductPackSpec;

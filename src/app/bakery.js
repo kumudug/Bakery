@@ -1,11 +1,44 @@
-import { calculateProductPacks }  from './product-service.js';
+import { Order } from './order.js';
 
-require('dotenv').config();
-console.log(process.env.ENV);
-try {
-    let productPacks = calculateProductPacks('VS5', 14);
-    console.log(productPacks);
+let order = new Order();
+
+function printProductData(){
+    console.log(order.products);
+    console.log(order.orderTotal);
+
+    var output = "";
+    order.products.forEach(p => {
+        var outputProd = p.productCode + '\n';
+        outputProd += "\t Original order qty: " + p.originalOrderQuantity;
+        outputProd += "\t Actual order qty: " + p.quantityProduct;
+        p.forEach(pack => {
+            console.log(pack);
+        })
+        output += outputProd + '\n';
+    });
+
+    document.getElementById('output').value = output;
 }
-catch(err) {
-    console.log(err);
+
+function addProductToOrder(productCode, productQty){
+    try {
+        order.addProduct(productCode, productQty);
+        printProductData();
+    }
+    catch(err) {
+        console.log(err);
+        alert(err);
+    }
 }
+
+document.getElementById('addOrder').addEventListener('click', function () {
+    var productCode = document.getElementById('productCode').value;
+    var productQty = document.getElementById('orderQty').value;
+    if(isNaN(productQty) || isNaN(parseInt(productQty))){
+        alert('Invalid product quantity');
+    } else{
+        addProductToOrder(productCode, productQty);
+    }
+});
+
+
