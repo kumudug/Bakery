@@ -10,10 +10,13 @@ function printProductData(){
     order.products.forEach(p => {
         var outputProd = p.productCode + '\n';
         outputProd += "\t Original order qty: " + p.originalOrderQuantity;
-        outputProd += "\t Actual order qty: " + p.quantityProduct;
+        outputProd += "\t Actual order qty: " + p.quantityProduct + '\n';
         p.forEach(pack => {
-            console.log(pack);
+            if(pack.numOfPacks){
+                outputProd += "\t" + pack.numOfPacks + " x " + pack.count + " @ " + pack.price + " = " + pack.dollarValuePack + "\n";
+            }
         })
+        outputProd += "\t Total: " + p.dollarValueProduct;
         output += outputProd + '\n';
     });
 

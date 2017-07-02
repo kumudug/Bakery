@@ -48,6 +48,24 @@ let products = [
                 price: 16.99
             }
         ]
+    },
+    {
+        name: 'test',
+        code: 'te',
+        packs: [
+            {
+                count: 9,
+                price: 5.95
+            },
+            {
+                count: 5,
+                price: 9.95
+            },
+            {
+                count: 2,
+                price: 16.99
+            }
+        ]
     }
 ]
 

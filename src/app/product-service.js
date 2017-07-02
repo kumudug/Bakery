@@ -39,13 +39,7 @@ function _calculateNumberOfPacks(sortedProductPackSpec, quantity){
         let numOfPacks = Math.floor(quantity / sortedProductPackSpec[i].count);
         let remainder = quantity % sortedProductPackSpec[i].count;
         if(numOfPacks > 0){
-            //Check if qty is going greater than original quantity and whether it can be adjusted
-            /*let tempQty = quantity - (sortedProductPackSpec[i].count * numOfPacks);
-            if(numOfPacks == 1 && i < (sortedProductPackSpec.length -1) && sortedProductPackSpec[i].count > (sortedProductPackSpec[i+1].count * 2) && tempQty <= 0){
-                numOfPacks = 0;
-            }else{*/
-                quantity = quantity - (sortedProductPackSpec[i].count * numOfPacks);
-            //}       
+            quantity = quantity - (sortedProductPackSpec[i].count * numOfPacks);
         }
 
         if(sortedProductPackSpec[i].numOfPacks){
@@ -59,15 +53,6 @@ function _calculateNumberOfPacks(sortedProductPackSpec, quantity){
         }
     }
 
-    /*sortedProductPackSpec.some(sp => {
-        let numOfPacks = Math.floor(quantity / sp.count);
-        if(numOfPacks > 0){
-            quantity = quantity - (sp.count * numOfPacks);
-        }
-        sp.numOfPacks = numOfPacks;
-        return quantity <= 0;
-    });*/
-
     if(quantity > 0){
         if(sortedProductPackSpec[sortedProductPackSpec.length - 1].numOfPacks){ 
             sortedProductPackSpec[sortedProductPackSpec.length - 1].numOfPacks += 1;
@@ -79,37 +64,20 @@ function _calculateNumberOfPacks(sortedProductPackSpec, quantity){
     
     //refine packs if the actual quantity is greater than ordered quantity
     if(quantity < 0){
-        let packsRefined = false;
         for (var i = (sortedProductPackSpec.length - 1); i > 0; i--) {
-            if(sortedProductPackSpec[i].numOfPacks && sortedProductPackSpec[i].numOfPacks > 1 && ((sortedProductPackSpec[i].numOfPacks * sortedProductPackSpec[i].count) > sortedProductPackSpec[i-1].count)){
+            if(sortedProductPackSpec[i].numOfPacks && sortedProductPackSpec[i].numOfPacks > 1 && ((sortedProductPackSpec[i].numOfPacks * sortedProductPackSpec[i].count) >= sortedProductPackSpec[i-1].count)){
                 //Remove smaller packs and add a larger pack while keeping quantity in tact
                 let differenceInQty = sortedProductPackSpec[i-1].count - (sortedProductPackSpec[i].numOfPacks * sortedProductPackSpec[i].count);
-                if(differenceInQty > quantity){
-                    packsRefined = true;
-                    //can safely change packs
+                if(differenceInQty >= quantity){
+                    //can safely change packs                    
+                    quantity -= (sortedProductPackSpec[i].numOfPacks * sortedProductPackSpec[i].count);
                     sortedProductPackSpec[i].numOfPacks = 0;
                     if(sortedProductPackSpec[i-1].numOfPacks){
                         sortedProductPackSpec[i-1].numOfPacks += 1;
+                        quantity += sortedProductPackSpec[i-1].count;
                     }else{
                         sortedProductPackSpec[i-1].numOfPacks = 1;
-                    }
-                }
-            }
-        }
-
-        if(!packsRefined){
-            for (var j = 0; j < (sortedProductPackSpec.length - 1); j++) {
-                if(sortedProductPackSpec[j].numOfPacks && sortedProductPackSpec[j].numOfPacks === 1 && ((sortedProductPackSpec[j+1].numOfPacks * 2) < sortedProductPackSpec[j].count)){
-                    //Remove larger pack and add 2 smaller packs while keeping quantity in tact
-                    let differenceInQty = sortedProductPackSpec[j].count - (sortedProductPackSpec[j+1].count * 2);
-                    if(differenceInQty > quantity){
-                        //can safely change packs
-                        sortedProductPackSpec[j].numOfPacks = 0;
-                        if(sortedProductPackSpec[j+1].numOfPacks){
-                            sortedProductPackSpec[j+1].numOfPacks += 1;
-                        }else{
-                            sortedProductPackSpec[j+1].numOfPacks = 1;
-                        }
+                        quantity += sortedProductPackSpec[i-1].count;
                     }
                 }
             }
