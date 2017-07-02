@@ -1,10 +1,14 @@
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
     devtool: 'cheap-module-eval-source-map',
     entry: './src/app/bakery.js',
     output: {        
         filename: 'bundle.js'
+    },
+    node: {
+        fs: 'empty'
     },
     module: {
         loaders: [{
@@ -18,7 +22,11 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-        template: './index.html'
+            template: './index.html'
+        }),
+        new Dotenv({
+            path: './.env', 
+            safe: true 
         })
     ]
 };

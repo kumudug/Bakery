@@ -1,4 +1,11 @@
-import { getProductPacks }  from './products.js';
+import { calculateProductPacks }  from './product-service.js';
 
-let productPacks = getProductPacks('VS5');
-console.log(productPacks);
+require('dotenv').config();
+console.log(process.env.ENV);
+try {
+    let productPacks = calculateProductPacks('VS5', 14);
+    console.log(productPacks);
+}
+catch(err) {
+    console.log(err);
+}

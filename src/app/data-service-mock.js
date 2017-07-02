@@ -52,7 +52,7 @@ let products = [
 ]
 
 function getProductData() {
-    return products;
+    return JSON.parse(JSON.stringify(products)); //Clone the object to avoid the original object from being modified
 }
 
 export { getProductData };
